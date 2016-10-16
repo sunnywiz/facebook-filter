@@ -21,7 +21,7 @@
 </div>
 
 <div>
-    <button id="buttonGetFeed1" disabled="disabled" onclick="getFeed()">Get Feed!</button> 
+    <button id="buttonGetFeed1" disabled="disabled" onclick="getFeed()">Get Feed!</button>
     <span id="loadResults1">Load Results go here</span>
 </div>
 
@@ -36,6 +36,8 @@
 <div>
     <button onclick="clearFeed()">Clear Saved Feed (if necessary)</button>
 </div>
+
+<h2>ANGULAR LAND!!!</h2>
 
 <script>
     // This is called with the results from from FB.getLoginStatus().
@@ -52,14 +54,14 @@
         } else if (response.status === 'not_authorized') {
             // The person is logged into Facebook, but not your app.
             document.getElementById('status').innerHTML = 'Please log ' +
-              'into this app.';
+                'into this app.';
             document.getElementById('buttonGetFeed1').disabled = true;
             document.getElementById('buttonGetFeed2').disabled = true;
         } else {
             // The person is not logged into Facebook, so we're not sure if
             // they are logged into this app or not.
             document.getElementById('status').innerHTML = 'Please log ' +
-              'into Facebook.';
+                'into Facebook.';
             document.getElementById('buttonGetFeed1').disabled = true;
             document.getElementById('buttonGetFeed2').disabled = true;
         }
@@ -117,11 +119,11 @@
         FB.api('/me', function (response) {
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
-              'Thanks for logging in, ' + response.name + '!';
+                'Thanks for logging in, ' + response.name + '!';
             document.getElementById('buttonGetFeed1').disabled = false;
             document.getElementById('buttonGetFeed2').disabled = false;
 
-            var savedStories = getStories(); 
+            var savedStories = getStories();
             redrawTable(savedStories);
             var loadResult = 'loaded ' + getKeys(savedStories).length + ' stories from local storage';
             document.getElementById('loadResults1').innerHTML = loadResult;
@@ -145,8 +147,8 @@
                 var savedStoriesCount = getKeys(savedStories).length;
                 var newStories = 0;
                 var dupStories = 0;
-                var loadResult = ''; 
-        
+                var loadResult = '';
+
                 for (var i = 0; i < response.data.length; i++) {
                     var post = response.data[i];
                     if (!post) continue;
@@ -157,9 +159,9 @@
                     if (savedStories[id]) {
                         dupStories++;
                     } else {
-                        newStories++; 
+                        newStories++;
                     }
-                    savedStories[id] = post;   // update it anyway! 
+                    savedStories[id] = post;   // update it anyway!
                 }
                 var newSavedStoriesCount = getKeys(savedStories).length;
                 loadResult = 'had ' +
@@ -172,7 +174,7 @@
                     newSavedStoriesCount +
                     ' posts.';
                 document.getElementById('loadResults1').innerHTML = loadResult;
-                document.getElementById('loadResults2').innerHTML = loadResult; 
+                document.getElementById('loadResults2').innerHTML = loadResult;
 
                 if (response.paging && response.paging.cursors && response.paging.cursors.after) {
                     feedUrl = baseFeedUrl + "&after=" + response.paging.cursors.after + "&limit=25";
@@ -184,9 +186,9 @@
                     // leave it disabled.
                 }
 
-                // resort saved stories?  prune it? 
+                // resort saved stories?  prune it?
 
-                saveStories(savedStories); 
+                saveStories(savedStories);
                 redrawTable(savedStories);
             });
     }
@@ -246,7 +248,7 @@
         if (!x) x = "{}";
         x = JSON.parse(x);
         if (!x) x = {};
-        return x; 
+        return x;
     }
 
     function saveStories( savedStories ) {
@@ -257,7 +259,7 @@
         var savedStories = {};
         saveStories(savedStories);
         redrawTable(savedStories);
-        feedUrl = baseFeedUrl; 
+        feedUrl = baseFeedUrl;
     }
 
     function getKeys(obj, filter) {
@@ -271,4 +273,33 @@
         }
         return result;
     }
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+<div ng-app="filterApp">
+    <div ng-controller="filterController as filterController">
+        <table>
+            <tr>
+                <th>Description</th>
+            </tr>
+            <tr ng-repeat="post in filterController.posts">
+                <td>{{description}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+    angular.module('filterApp', [])
+        .controller('filterController',
+            function () {
+                var filterController = this;
+                filterController.posts = [
+                    { description: "foo" },
+                    { description: "bar" }
+                ];
+            }
+        );
 </script>
