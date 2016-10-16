@@ -20,12 +20,18 @@
     Facebook connection status: <span id="status" />
 </div>
 
-<div id="results">
+<div>
+    <button id="buttonGetFeed1" disabled="disabled" onclick="getFeed()">Get Feed!</button> 
+    <span id="loadResults1">Load Results go here</span>
+</div>
+
+<div id="feedResults">
     <div>Results go here.</div>
 </div>
 
 <div>
-    <button id="buttonGetFeed" disabled="disabled" onclick="getFeed()">Get Feed!</button>
+    <button id="buttonGetFeed2" disabled="disabled" onclick="getFeed()">Get Feed!</button>
+    <span id="loadResults2">Load Results go here</span>
 </div>
 <div>
     <button onclick="clearFeed()">Clear Saved Feed (if necessary)</button>
@@ -47,13 +53,15 @@
             // The person is logged into Facebook, but not your app.
             document.getElementById('status').innerHTML = 'Please log ' +
               'into this app.';
-            document.getElementById('buttonGetFeed').disabled = true;
+            document.getElementById('buttonGetFeed1').disabled = true;
+            document.getElementById('buttonGetFeed2').disabled = true;
         } else {
             // The person is not logged into Facebook, so we're not sure if
             // they are logged into this app or not.
             document.getElementById('status').innerHTML = 'Please log ' +
               'into Facebook.';
-            document.getElementById('buttonGetFeed').disabled = true;
+            document.getElementById('buttonGetFeed1').disabled = true;
+            document.getElementById('buttonGetFeed2').disabled = true;
         }
     }
 
@@ -110,24 +118,35 @@
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
               'Thanks for logging in, ' + response.name + '!';
-            document.getElementById('buttonGetFeed').disabled = false;
+            document.getElementById('buttonGetFeed1').disabled = false;
+            document.getElementById('buttonGetFeed2').disabled = false;
 
             var savedStories = getStories(); 
             redrawTable(savedStories);
-
+            var loadResult = 'loaded ' + getKeys(savedStories).length + ' stories from local storage';
+            document.getElementById('loadResults1').innerHTML = loadResult;
+            document.getElementById('loadResults2').innerHTML = loadResult;
         });
     }
 
     function getFeed() {
-        var buttonGetFeed = document.getElementById('buttonGetFeed');
-        buttonGetFeed.disabled = true;
 
-        var savedStories = getStories(); 
+        var buttonGetFeed1 = document.getElementById('buttonGetFeed1');
+        buttonGetFeed1.disabled = true;
+        var buttonGetFeed2 = document.getElementById('buttonGetFeed2');
+        buttonGetFeed2.disabled = true;
 
         FB.api(feedUrl,
             function (response) {
 
                 console.log(response);
+
+                var savedStories = getStories();
+                var savedStoriesCount = getKeys(savedStories).length;
+                var newStories = 0;
+                var dupStories = 0;
+                var loadResult = ''; 
+        
                 for (var i = 0; i < response.data.length; i++) {
                     var post = response.data[i];
                     if (!post) continue;
@@ -136,16 +155,31 @@
                     if (!id) continue;
 
                     if (savedStories[id]) {
-                        // duplicate!
+                        dupStories++;
+                    } else {
+                        newStories++; 
                     }
                     savedStories[id] = post;   // update it anyway! 
-
                 }
+                var newSavedStoriesCount = getKeys(savedStories).length;
+                loadResult = 'had ' +
+                    savedStoriesCount +
+                    ' posts, loaded ' +
+                    newStories +
+                    ' new, found ' +
+                    dupStories +
+                    ' dups, now ' +
+                    newSavedStoriesCount +
+                    ' posts.';
+                document.getElementById('loadResults1').innerHTML = loadResult;
+                document.getElementById('loadResults2').innerHTML = loadResult; 
 
                 if (response.paging && response.paging.cursors && response.paging.cursors.after) {
                     feedUrl = baseFeedUrl + "&after=" + response.paging.cursors.after + "&limit=25";
-                    buttonGetFeed.disabled = false;
-                    buttonGetFeed.innerHTML = "Get MORE!";
+                    buttonGetFeed1.disabled = false;
+                    buttonGetFeed1.innerHTML = "Get MORE!";
+                    buttonGetFeed2.disabled = false;
+                    buttonGetFeed2.innerHTML = "Get MORE!";
                 } else {
                     // leave it disabled.
                 }
@@ -164,7 +198,7 @@
     function redrawTable(savedStories) {
         if (!table) {
             table = document.createElement('table');
-            var div = document.getElementById('results');
+            var div = document.getElementById('feedResults');
             div.appendChild(table);
         }
 
@@ -222,7 +256,8 @@
     function clearFeed() {
         var savedStories = {};
         saveStories(savedStories);
-        redrawTable(savedStories); 
+        redrawTable(savedStories);
+        feedUrl = baseFeedUrl; 
     }
 
     function getKeys(obj, filter) {
