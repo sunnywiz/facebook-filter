@@ -38,6 +38,33 @@
 </div>
 
 <h2>ANGULAR LAND!!!</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+<div ng-app="filterApp">
+    <div ng-controller="filterController as fc">
+        <table>
+            <tr>
+                <th>Description</th>
+            </tr>
+            <tr ng-repeat="p in fc.posts">
+                <td>{{p.description}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+    angular.module('filterApp', [])
+        .controller('filterController',
+            function() {
+                var filterController = this;
+                filterController.posts = [
+                    { description: "foo" },
+                    { description: "bar" }
+                ];
+            });
+</script>
+
 
 <script>
     // This is called with the results from from FB.getLoginStatus().
@@ -207,7 +234,7 @@
         table.innerHTML = "";
 
         var keys = getKeys(savedStories);
-        keys.sort(function(a, b) {
+        keys.sort(function (a, b) {
             return new Date(savedStories[b].created_time) - new Date(savedStories[a].created_time);
         });
 
@@ -251,7 +278,7 @@
         return x;
     }
 
-    function saveStories( savedStories ) {
+    function saveStories(savedStories) {
         localStorage.setItem("savedStories", JSON.stringify(savedStories));
     }
 
@@ -273,33 +300,4 @@
         }
         return result;
     }
-</script>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-
-<div ng-app="filterApp">
-    <div ng-controller="filterController as filterController">
-        <table>
-            <tr>
-                <th>Description</th>
-            </tr>
-            <tr ng-repeat="post in filterController.posts">
-                <td>{{description}}</td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<script>
-    angular.module('filterApp', [])
-        .controller('filterController',
-            function () {
-                var filterController = this;
-                filterController.posts = [
-                    { description: "foo" },
-                    { description: "bar" }
-                ];
-            }
-        );
 </script>
