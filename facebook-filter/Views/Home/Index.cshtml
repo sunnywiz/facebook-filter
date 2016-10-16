@@ -90,8 +90,13 @@
         });
     }
 
+    var baseFeedUrl = 'me/home?fields=icon,from,story,permalink_url,picture,description';
+    var feedUrl = baseFeedUrl; 
+
     function getFeed() {
-        FB.api('me/home?fields=icon,from,story,permalink_url,picture,description',
+        var buttonGetFeed = document.getElementById('buttonGetFeed');
+        buttonGetFeed.disabled = true; 
+        FB.api(feedUrl,
             function (response) {
                 // Create table.
                 var table = document.createElement('table');
@@ -140,6 +145,14 @@
                         c3.innerHTML = ' ';
                     }
                 }
+
+                if (response.paging && response.paging.cursors && response.paging.cursors.after) {
+                    feedUrl = baseFeedUrl + "&after=" + response.paging.cursors.after + "&limit=25";
+                    buttonGetFeed.disabled = false;
+                    buttonGetFeed.innerHTML = "Get MORE!";
+                } else {
+                    // leave it disabled. 
+                }
             });
     }
 </script>
@@ -157,10 +170,11 @@
     Facebook connection status: <span id="status" />
 </div>
 
+<div id="results">
+    <div>Results go here.</div>
+</div>
+
 <div>
     <button id="buttonGetFeed" disabled="disabled" onclick="getFeed()">Get Feed!</button>
 </div>
 
-<div id="results">
-    Results go here.
-</div>
