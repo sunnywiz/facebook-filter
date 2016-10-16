@@ -93,23 +93,11 @@
     var baseFeedUrl = 'me/home?fields=icon,from,story,permalink_url,picture,description';
     var feedUrl = baseFeedUrl;
     var table;
-    var tableRow; 
+    var savedStories = [];
 
     function getFeed() {
         var buttonGetFeed = document.getElementById('buttonGetFeed');
         buttonGetFeed.disabled = true;
-
-        if (!table) {
-            table = document.createElement('table');
-            var div = document.getElementById('results');
-            div.appendChild(table);
-            // Create table.
-            var headerRow = table.insertRow(0);
-            headerRow.insertCell(0).innerHTML = "time";
-            headerRow.insertCell(1).innerHTML = "story/author/description";
-            headerRow.insertCell(2).innerHTML = "thumbnail";
-            tableRow = 1; 
-        }
 
         FB.api(feedUrl,
             function (response) {
@@ -119,32 +107,7 @@
                     var post = response.data[i];
                     if (!post) continue;
 
-                    var row = table.insertRow(tableRow++);
-
-                    var c0 = row.insertCell(0);
-                    c0.innerHTML = prettyDate(post.created_time); 
-
-                    var x = '';
-                    if (post.from && post.from.name) {
-                        x = post.from.name;
-                    }
-                    if (post.story) {
-                        x = x + ' '+post.story;
-                    } 
-                    if (post.description) {
-                        x = x + ':' + post.description; 
-                    }
-                    var c1 = row.insertCell(1);
-                    c1.innerHTML = x; 
-
-                    var c2 = row.insertCell(2);
-                    if (post.picture) {
-                        var img = document.createElement("img");
-                        img.src = post.picture;
-                        c2.appendChild(img);
-                    } else {
-                        c2.innerHTML = ' ';
-                    }
+                    savedStories.push(post);
                 }
 
                 if (response.paging && response.paging.cursors && response.paging.cursors.after) {
@@ -154,7 +117,49 @@
                 } else {
                     // leave it disabled.
                 }
+                redrawTable();
             });
+    }
+
+    function redrawTable() {
+        if (!table) {
+            table = document.createElement('table');
+            var div = document.getElementById('results');
+            div.appendChild(table);
+        }
+
+        table.innerHTML = "";
+
+        for (var i = 0; i < savedStories.length; i++) {
+            var post = savedStories[i];
+
+            var row = table.insertRow(i);
+
+            var c0 = row.insertCell(0);
+            c0.innerHTML = prettyDate(post.created_time);
+
+            var x = '';
+            if (post.from && post.from.name) {
+                x = post.from.name;
+            }
+            if (post.story) {
+                x = x + ' ' + post.story;
+            }
+            if (post.description) {
+                x = x + ':' + post.description;
+            }
+            var c1 = row.insertCell(1);
+            c1.innerHTML = x;
+
+            var c2 = row.insertCell(2);
+            if (post.picture) {
+                var img = document.createElement("img");
+                img.src = post.picture;
+                c2.appendChild(img);
+            } else {
+                c2.innerHTML = ' ';
+            }
+        }
     }
 </script>
 
