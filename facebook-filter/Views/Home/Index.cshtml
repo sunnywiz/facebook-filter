@@ -91,58 +91,59 @@
     }
 
     var baseFeedUrl = 'me/home?fields=icon,from,story,permalink_url,picture,description';
-    var feedUrl = baseFeedUrl; 
+    var feedUrl = baseFeedUrl;
+    var table;
+    var tableRow; 
 
     function getFeed() {
         var buttonGetFeed = document.getElementById('buttonGetFeed');
-        buttonGetFeed.disabled = true; 
+        buttonGetFeed.disabled = true;
+
+        if (!table) {
+            table = document.createElement('table');
+            var div = document.getElementById('results');
+            div.appendChild(table);
+            // Create table.
+            var headerRow = table.insertRow(0);
+            headerRow.insertCell(0).innerHTML = "time";
+            headerRow.insertCell(1).innerHTML = "story/author/description";
+            headerRow.insertCell(2).innerHTML = "thumbnail";
+            tableRow = 1; 
+        }
+
         FB.api(feedUrl,
             function (response) {
-                // Create table.
-                var table = document.createElement('table');
-                var div = document.getElementById('results');
-                div.appendChild(table);
-                var headerRow = table.insertRow(0);
-                headerRow.insertCell(0).innerHTML = "story";
-                headerRow.insertCell(1).innerHTML = "story";
-                headerRow.insertCell(2).innerHTML = "description";
-                headerRow.insertCell(3).innerHTML = "thumbnail";
 
                 console.log(response);
                 for (var i = 0; i < response.data.length; i++) {
                     var post = response.data[i];
                     if (!post) continue;
 
-                    var row = table.insertRow(i + 1);
+                    var row = table.insertRow(tableRow++);
 
                     var c0 = row.insertCell(0);
-                    if (post.story) {
-                        c0.innerHTML = post.story;
-                    } else {
-                        c0.innerHTML = ' ';
-                    }
+                    c0.innerHTML = prettyDate(post.created_time); 
 
-                    var c1 = row.insertCell(1);
+                    var x = '';
                     if (post.from && post.from.name) {
-                        c1.innerHTML = post.from.name;
-                    } else {
-                        c1.innerHTML = ' ';
+                        x = post.from.name;
                     }
+                    if (post.story) {
+                        x = x + ' '+post.story;
+                    } 
+                    if (post.description) {
+                        x = x + ':' + post.description; 
+                    }
+                    var c1 = row.insertCell(1);
+                    c1.innerHTML = x; 
 
                     var c2 = row.insertCell(2);
-                    if (post.description) {
-                        c2.innerHTML = post.description || ' ';
-                    } else {
-                        c2.innerHTML = ' ';
-                    }
-
-                    var c3 = row.insertCell(3);
                     if (post.picture) {
                         var img = document.createElement("img");
                         img.src = post.picture;
-                        c3.appendChild(img);
+                        c2.appendChild(img);
                     } else {
-                        c3.innerHTML = ' ';
+                        c2.innerHTML = ' ';
                     }
                 }
 
@@ -151,7 +152,7 @@
                     buttonGetFeed.disabled = false;
                     buttonGetFeed.innerHTML = "Get MORE!";
                 } else {
-                    // leave it disabled. 
+                    // leave it disabled.
                 }
             });
     }
