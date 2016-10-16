@@ -86,26 +86,59 @@
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
               'Thanks for logging in, ' + response.name + '!';
-            document.getElementById('buttonGetFeed').disabled = false; 
+            document.getElementById('buttonGetFeed').disabled = false;
         });
     }
 
     function getFeed() {
         FB.api('me/home?fields=icon,from,story,permalink_url,picture,description',
-            function(response) {
+            function (response) {
                 // Create table.
                 var table = document.createElement('table');
                 var div = document.getElementById('results');
                 div.appendChild(table);
                 var headerRow = table.insertRow(0);
                 headerRow.insertCell(0).innerHTML = "story";
-                headerRow.insertCell(0).innerHTML = "description";
+                headerRow.insertCell(1).innerHTML = "story";
+                headerRow.insertCell(2).innerHTML = "description";
+                headerRow.insertCell(3).innerHTML = "thumbnail";
+
                 console.log(response);
                 for (var i = 0; i < response.data.length; i++) {
                     var post = response.data[i];
-                    var row = table.insertRow(i+1);
-                    row.insertCell(0).innerHTML = post.story || ' ';
-                    row.insertCell(1).innerHTML = post.description || ' ';
+                    if (!post) continue;
+
+                    var row = table.insertRow(i + 1);
+
+                    var c0 = row.insertCell(0);
+                    if (post.story) {
+                        c0.innerHTML = post.story;
+                    } else {
+                        c0.innerHTML = ' ';
+                    }
+
+                    var c1 = row.insertCell(1);
+                    if (post.from && post.from.name) {
+                        c1.innerHTML = post.from.name;
+                    } else {
+                        c1.innerHTML = ' ';
+                    }
+
+                    var c2 = row.insertCell(2);
+                    if (post.description) {
+                        c2.innerHTML = post.description || ' ';
+                    } else {
+                        c2.innerHTML = ' ';
+                    }
+
+                    var c3 = row.insertCell(3);
+                    if (post.picture) {
+                        var img = document.createElement("img");
+                        img.src = post.picture;
+                        c3.appendChild(img);
+                    } else {
+                        c3.innerHTML = ' ';
+                    }
                 }
             });
     }
