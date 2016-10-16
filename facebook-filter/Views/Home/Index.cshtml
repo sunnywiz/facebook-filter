@@ -46,7 +46,7 @@ I'm on my way I'm making it.
             cookie: true,  // enable cookies to allow the server to access
             // the session
             xfbml: true,  // parse social plugins on this page
-            version: 'v2.8' // use graph api version 2.5
+            version: 'v2.3' // use graph api version 2.5
         });
 
         // Now that we've initialized the JavaScript SDK, we call
@@ -85,7 +85,7 @@ I'm on my way I'm making it.
             document.getElementById('status').innerHTML =
               'Thanks for logging in, ' + response.name + '!';
         });
-        FB.api('/me/friendlists',
+        FB.api('me/home?fields=icon,from,story,permalink_url,picture,description',
             function(response) {
                 console.log(response);
             });
@@ -98,7 +98,7 @@ I'm on my way I'm making it.
   the FB.login() function when clicked.
 -->
 
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+<fb:login-button scope="public_profile,email,user_posts,read_stream" onlogin="checkLoginState();">
 </fb:login-button>
 
 <div id="status">
