@@ -1,27 +1,27 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "SunnyFilter (Facebook Catchup)";
 }
 
 <!-- Completely yanked from ezfb's demo app and then pruned  -- http://plnkr.co/edit/qclqht?p=preview -->
 
-<div ng-app="plunker">
+<div ng-app="sunnycatchup">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
-    <div ng-controller="MainCtrl">
+    <div ng-controller="darth">
         <div class="container">
             <h2>angular-easyfb API demo</h2>
             <div>
-                <button class="btn btn-primary" ng-click="login()" ng-disabled="loginStatus.status == 'connected'">Connect with Facebook</button>
+                <button class="btn btn-primary" ng-click="login()" ng-disabled="loginStatus == 'connected'">Connect with Facebook</button>
                 &nbsp;
-                <button class="btn btn-danger" ng-click="logout()" ng-disabled="!loginStatus || loginStatus.status != 'connected'">Logout</button>
+                <button class="btn btn-danger" ng-click="logout()" ng-disabled="!loginStatus || loginStatus != 'connected'">Logout</button>
                 &nbsp;
             </div>
 
             <br>
             <div class="row">
                 <div class="col-md-6">
-                    <h4 class="text-info">{{loginStatus}}</h4>
+                    <h4 class="text-info">Login Status: {{loginStatus}}</h4>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
 
 <script>
 
-    var app = angular.module('plunker', ['ezfb'])
+    var app = angular.module('sunnycatchup', ['ezfb'])
 
     .config(function (ezfbProvider) {
         /**
@@ -44,9 +44,9 @@
         });
     })
 
-    .controller('MainCtrl', function ($scope, ezfb, $window, $location) {
+    .controller('darth', function ($scope, ezfb, $window, $location) {
 
-        $scope.loginStatus = "??";
+        $scope.loginStatus = "vader does not yet know status";
 
         updateLoginStatus();
 
@@ -80,7 +80,7 @@
          */
         function updateLoginStatus() {
             ezfb.getLoginStatus(function (res) {
-                $scope.loginStatus = res;
+                $scope.loginStatus = res.status;
             });
         }
 
