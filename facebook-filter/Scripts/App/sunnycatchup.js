@@ -13,9 +13,50 @@
 })
 .controller('darth', function ($scope, ezfb, $window, $location) {
 
-    $scope.loginStatus = "vader does not yet know status";
+    // private stuff
 
-    updateLoginStatus();
+    var baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
+    var allPosts = {};
+
+    // scope stuff
+
+    function storeToLocalStorage() {
+        localStorage.setItem("allPosts", JSON.stringify(allPosts));
+    }
+
+    function loadFromLocalStorage() {
+        var x = localStorage.allPosts;
+        if (!x) x = "{}";
+        x = JSON.parse(x);
+        if (!x) x = {};
+        allPosts = x;
+    }
+
+    function updateLoginStatus() {
+        ezfb.getLoginStatus(function (res) {
+            $scope.loginStatus = res.status;
+        });
+    }
+
+    function rebuildViewModel() {
+        $scope.postsViewModel = [];
+        var keys = Object.keys(allPosts);
+        keys.sort(function (a, b) {
+            return new Date(allPosts[b].created_time) - new Date(allPosts[a].created_time);
+        });
+        for (var i = 0; i < keys.length; i++) {
+            var post = allPosts[keys[i]];
+            $scope.postsViewModel.push({
+                prettyCreated: prettyDate(post.created_time),
+                from: post.from.name,
+                story: post.story,
+                description: post.description,
+                picture: post.picture
+            });
+        }
+    }
+
+    $scope.loginStatus = "vader does not yet know status";
 
     $scope.login = function () {
         /**
@@ -42,19 +83,7 @@
         });
     };
 
-    /**
-     * Update loginStatus result
-     */
-    function updateLoginStatus() {
-        ezfb.getLoginStatus(function (res) {
-            $scope.loginStatus = res.status;
-        });
-    }
-
     $scope.postsViewModel = [];
-    $scope.allPosts = {};
-    $scope.baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
-    $scope.nextFeedUrl = $scope.baseFeedUrl;
     $scope.dupStories = 0;
     $scope.newStories = 0;
     $scope.lastLoadTime = 0;
@@ -62,7 +91,7 @@
     $scope.getPosts = function () {
         var startTime = Date.now();
         ezfb.api($scope.nextFeedUrl,
-            function(feedResult) {
+            function (feedResult) {
                 console.log(feedResult);
 
                 for (var i = 0; i < feedResult.data.length; i++) {
@@ -72,16 +101,16 @@
                     var id = post.id;
                     if (!id) continue;
 
-                    if ($scope.allPosts[id]) {
+                    if (allPosts[id]) {
                         $scope.dupStories++;
                     } else {
                         $scope.newStories++;
                     }
-                    $scope.allPosts[id] = post; // update it anyway!
+                    allPosts[id] = post; // update it anyway!
                 }
 
                 if (feedResult.paging && feedResult.paging.cursors && feedResult.paging.cursors.after) {
-                    $scope.nextFeedUrl = $scope.baseFeedUrl + "&after=" + feedResult.paging.cursors.after + "&limit=25";
+                    $scope.nextFeedUrl = baseFeedUrl + "&after=" + feedResult.paging.cursors.after + "&limit=25";
                 } else {
                     $scope.nextFeedUrl = null;
                 }
@@ -89,30 +118,20 @@
                 var endTime = Date.now();
                 $scope.lastLoadTime = endTime - startTime;
 
-                $scope.rebuildViewModel();
+                storeToLocalStorage();
+                rebuildViewModel();
             });
     }
 
     $scope.numPosts = function () {
-        return Object.keys($scope.allPosts).length;
-    }
+        return Object.keys(allPosts).length;
+    };
 
-    $scope.rebuildViewModel = function () {
-        $scope.postsViewModel = [];
-        var keys = Object.keys($scope.allPosts);
-        keys.sort(function (a, b) {
-            return new Date($scope.allPosts[b].created_time) - new Date($scope.allPosts[a].created_time);
-        });
-        for (var i = 0; i < keys.length; i++) {
-            var post = $scope.allPosts[keys[i]];
-            $scope.postsViewModel.push({
-                prettyCreated: prettyDate(post.created_time),
-                from: post.from.name,
-                story: post.story,
-                description: post.description,
-                picture: post.picture
-            });
-        }
-    }
+
+    // INITIALIZE!
+    updateLoginStatus();
+    loadFromLocalStorage();
+    rebuildViewModel();
+    $scope.nextFeedUrl = baseFeedUrl;
 
 });

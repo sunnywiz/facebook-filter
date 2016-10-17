@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "SunnyFilter (Facebook Catchup)";
+    ViewBag.Title = "Sunny FB Catchup";
 }
 
 <!-- Completely yanked from ezfb's demo app and then pruned  -- http://plnkr.co/edit/qclqht?p=preview -->
@@ -12,8 +12,7 @@
 
     <div ng-controller="darth">
         <div class="container">
-            <h2>angular-easyfb API demo</h2>
-            <div>
+            <div class="row well-sm">
                 <button class="btn btn-primary"
                         ng-click="login()"
                         ng-disabled="loginStatus == 'connected'">
@@ -26,61 +25,44 @@
                     Logout
                 </button>
                 &nbsp;
+                Login Status: {{loginStatus}}
             </div>
 
-            <br>
-            <div class="row">
-                <div class="col-md-6">
-                    <h4 class="text-info">Login Status: {{loginStatus}}</h4>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
+            <div class="well-sm">
+                <div class="row well-sm">
                     <button class="btn btn-primary"
                             ng-click="getPosts()"
                             ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
                         Get More Posts!
                     </button>
-                </div>
-                <div class="col-md-4">
                     Loaded: {{numPosts()}}
-                </div>
-                <div class="col-md-4">
                     New: {{newStories}}
                     Dup: {{dupStories}}
                     ({{lastLoadTime}} ms)
                 </div>
-            </div>
-            <div class="row">
-                <table class="table table-condensed table-striped">
-                    <tr ng-repeat="post in postsViewModel">
-                        <td>{{post.prettyCreated}}</td>
-                        <td>{{post.from}} {{post.story}} {{post.description}}</td>
-                        <td>
-                           <img class="image" ng-show="post.picture" src="{{post.picture}}"/> 
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
+                <div class="row">
+                    <table class="table table-condensed table-striped">
+                        <tr ng-repeat="post in postsViewModel">
+                            <td>{{post.prettyCreated}}</td>
+                            <td>{{post.from}} {{post.story}} {{post.description}}</td>
+                            <td>
+                                <img class="image" ng-show="post.picture" src="{{post.picture}}" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row well-sm">
                     <button class="btn btn-primary"
                             ng-click="getPosts()"
-                            ng-disabled="loginStatus != 'connected'">
+                            ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
                         Get More Posts!
                     </button>
-                </div>
-                <div class="col-md-4">
                     Loaded: {{numPosts()}}
-                </div>
-                <div class="col-md-4">
                     New: {{newStories}}
                     Dup: {{dupStories}}
                     ({{lastLoadTime}} ms)
                 </div>
             </div>
-
         </div>
     </div>
 </div>
