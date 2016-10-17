@@ -15,7 +15,7 @@
 
     // private stuff
 
-    var baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
+    var baseFeedUrl = 'me/home?fields=id,icon,from,story,caption,link,message,picture,full_picture,description';
     var allPosts = {};
 
     // scope stuff
@@ -49,10 +49,12 @@
             $scope.postsViewModel.push({
                 id: post.id,
                 created_time: post.created_time,
+                caption: post.caption,
+                message: post.message,
                 prettyCreated: prettyDate(post.created_time),
                 from: post.from.name,
                 story: post.story,
-                permalink_url: post.permalink_url,
+                link: post.link,
                 description: post.description,
                 picture: post.picture
             });

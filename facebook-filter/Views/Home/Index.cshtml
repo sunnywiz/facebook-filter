@@ -49,13 +49,18 @@
                         <tr ng-repeat="post in postsViewModel">
                             <td title="{{post.created_time}}">{{post.prettyCreated}}</td>
                             <td title="{{post.id}}">
-                                {{post.from}}
-                                {{post.story}}
+                                <div>
+                                    <b>{{post.from}}</b>
+                                    <i>{{post.story}}</i>
+                                    {{post.message}}
+                                </div>
+                            <td>
                                 {{post.description}}
-                                {{post.permalink_url}}
+                                <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
+                                <span ng-show="post.caption">[{{post.caption}}]</span>
                             </td>
                             <td>
-                                <img class="image" ng-show="post.picture" src="{{post.picture}}" />
+                                <img class="image" ng-show="post.picture" src="{{post.picture}}"/>                                
                             </td>
                         </tr>
                     </table>
