@@ -34,11 +34,20 @@
             </div>
 
             <div class="row">
-                <button class="btn btn-primary"
-                        ng-click="getPosts()"
-                        ng-disabled="loginStatus != 'connected'">
-                    Get More Posts!
-                </button>
+                <div class="col-md-4">
+                    <button class="btn btn-primary"
+                            ng-click="getPosts()"
+                            ng-disabled="loginStatus != 'connected'">
+                        Get More Posts!
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    Loaded: {{numPosts()}}
+                </div>
+                <div class="col-md-4">
+                    New: {{newStories}}
+                    Dup: {{dupStories}}
+                </div>
             </div>
 
         </div>
@@ -104,13 +113,33 @@
     $scope.allPosts = {};
     $scope.baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
     $scope.nextFeedUrl = $scope.baseFeedUrl;
+    $scope.dupStories = 0;
+    $scope.newStories = 0;
 
     $scope.getPosts = function () {
         ezfb.api($scope.nextFeedUrl,
             function(feedResult) {
                 console.log(feedResult);
 
+                for (var i = 0; i < feedResult.data.length; i++) {
+                    var post = feedResult.data[i];
+                    if (!post) continue;
+
+                    var id = post.id;
+                    if (!id) continue;
+
+                    if ($scope.allPosts[id]) {
+                        $scope.dupStories++;
+                    } else {
+                        $scope.newStories++;
+                    }
+                    $scope.allPosts[id] = post;   // update it anyway!
+                }
             });
+    }
+
+    $scope.numPosts = function() {
+        return Object.keys($scope.allPosts).length;
     }
 
 });
