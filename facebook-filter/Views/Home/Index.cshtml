@@ -26,6 +26,10 @@
                 </button>
                 &nbsp;
                 Login Status: {{loginStatus}}
+                <button class="btn btn-warning"
+                        ng-click="clearLocalStorage()">
+                    Clear Local Storage
+                </button>
             </div>
 
             <div class="well-sm">
@@ -43,8 +47,13 @@
                 <div class="row">
                     <table class="table table-condensed table-striped">
                         <tr ng-repeat="post in postsViewModel">
-                            <td>{{post.prettyCreated}}</td>
-                            <td>{{post.from}} {{post.story}} {{post.description}}</td>
+                            <td title="{{post.created_time}}">{{post.prettyCreated}}</td>
+                            <td title="{{post.id}}">
+                                {{post.from}}
+                                {{post.story}}
+                                {{post.description}}
+                                {{post.permalink_url}}
+                            </td>
                             <td>
                                 <img class="image" ng-show="post.picture" src="{{post.picture}}" />
                             </td>

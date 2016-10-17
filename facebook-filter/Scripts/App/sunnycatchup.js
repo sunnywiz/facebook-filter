@@ -47,9 +47,12 @@
         for (var i = 0; i < keys.length; i++) {
             var post = allPosts[keys[i]];
             $scope.postsViewModel.push({
+                id: post.id,
+                created_time: post.created_time,
                 prettyCreated: prettyDate(post.created_time),
                 from: post.from.name,
                 story: post.story,
+                permalink_url: post.permalink_url,
                 description: post.description,
                 picture: post.picture
             });
@@ -127,6 +130,11 @@
         return Object.keys(allPosts).length;
     };
 
+    $scope.clearLocalStorage = function () {
+        allPosts = {};
+        storeToLocalStorage();
+        rebuildViewModel();
+    };
 
     // INITIALIZE!
     updateLoginStatus();
