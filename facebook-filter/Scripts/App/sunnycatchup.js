@@ -62,7 +62,7 @@
     $scope.getPosts = function () {
         var startTime = Date.now();
         ezfb.api($scope.nextFeedUrl,
-            function (feedResult) {
+            function(feedResult) {
                 console.log(feedResult);
 
                 for (var i = 0; i < feedResult.data.length; i++) {
@@ -77,7 +77,13 @@
                     } else {
                         $scope.newStories++;
                     }
-                    $scope.allPosts[id] = post;   // update it anyway!
+                    $scope.allPosts[id] = post; // update it anyway!
+                }
+
+                if (feedResult.paging && feedResult.paging.cursors && feedResult.paging.cursors.after) {
+                    $scope.nextFeedUrl = $scope.baseFeedUrl + "&after=" + feedResult.paging.cursors.after + "&limit=25";
+                } else {
+                    $scope.nextFeedUrl = null;
                 }
 
                 var endTime = Date.now();
