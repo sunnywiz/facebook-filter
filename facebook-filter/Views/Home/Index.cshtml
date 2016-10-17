@@ -3,303 +3,92 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Quick app to try to make sense of my newfeed, with a bit of sorting. </h2>
+<!-- Completely yanked from ezfb's demo app and then pruned  -- http://plnkr.co/edit/qclqht?p=preview -->
 
-<p>If you're not logged in, click the Login button below to attach this app to your facebook account. </p>
+<div ng-app="plunker">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+    <div ng-controller="MainCtrl">
+        <div class="container">
+            <h2>angular-easyfb API demo</h2>
+            <div>
+                <button class="btn btn-primary" ng-click="login()" ng-disabled="loginStatus.status == 'connected'">Connect with Facebook</button>
+                &nbsp;
+                <button class="btn btn-danger" ng-click="logout()" ng-disabled="!loginStatus || loginStatus.status != 'connected'">Logout</button>
+                &nbsp;
+            </div>
 
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<fb:login-button scope="public_profile,email,user_posts,read_stream" onlogin="checkLoginState();">
-</fb:login-button>
-
-<div>
-    Facebook connection status: <span id="status" />
-</div>
-
-<div>
-    <button id="buttonGetFeed1" disabled="disabled" onclick="getFeed()">Get Feed!</button>
-    <span id="loadResults1">Load Results go here</span>
-</div>
-
-<div id="feedResults">
-    <div>Results go here.</div>
-</div>
-
-<div>
-    <button id="buttonGetFeed2" disabled="disabled" onclick="getFeed()">Get Feed!</button>
-    <span id="loadResults2">Load Results go here</span>
-</div>
-<div>
-    <button onclick="clearFeed()">Clear Saved Feed (if necessary)</button>
-</div>
-
-<h2>ANGULAR LAND!!!</h2>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-
-<!-- Try to follow:  http://plnkr.co/edit/qclqht?p=preview  -->
-
-<div ng-app="filterApp">
-    <div ng-controller="filterController as fc">
-        <table>
-            <tr>
-                <th>Description</th>
-            </tr>
-            <tr ng-repeat="p in fc.posts">
-                <td>{{p.description}}</td>
-            </tr>
-        </table>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="text-info">{{loginStatus}}</h4>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    angular.module('filterApp', [])
-        .controller('filterController',
-            function() {
-                var filterController = this;
-                filterController.posts = [
-                    { description: "foo" },
-                    { description: "bar" }
-                ];
-            });
-</script>
 
+    var app = angular.module('plunker', ['ezfb'])
 
-<script>
-    // This is called with the results from from FB.getLoginStatus().
-    function statusChangeCallback(response) {
-        console.log('statusChangeCallback');
-        console.log(response);
-        // The response object is returned with a status field that lets the
-        // app know the current login status of the person.
-        // Full docs on the response object can be found in the documentation
-        // for FB.getLoginStatus().
-        if (response.status === 'connected') {
-            // Logged into your app and Facebook.
-            testAPI();
-        } else if (response.status === 'not_authorized') {
-            // The person is logged into Facebook, but not your app.
-            document.getElementById('status').innerHTML = 'Please log ' +
-                'into this app.';
-            document.getElementById('buttonGetFeed1').disabled = true;
-            document.getElementById('buttonGetFeed2').disabled = true;
-        } else {
-            // The person is not logged into Facebook, so we're not sure if
-            // they are logged into this app or not.
-            document.getElementById('status').innerHTML = 'Please log ' +
-                'into Facebook.';
-            document.getElementById('buttonGetFeed1').disabled = true;
-            document.getElementById('buttonGetFeed2').disabled = true;
-        }
-    }
-
-    // This function is called when someone finishes with the Login
-    // Button.  See the onlogin handler attached to it in the sample
-    // code below.
-    function checkLoginState() {
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
-    }
-
-    window.fbAsyncInit = function () {
-        FB.init({
+    .config(function (ezfbProvider) {
+        /**
+         * Basic setup
+         *
+         * https://github.com/pc035860/angular-easyfb#configuration
+         */
+        ezfbProvider.setInitParams({
             appId: '426833590733307',
-            cookie: true,  // enable cookies to allow the server to access
-            // the session
-            xfbml: true,  // parse social plugins on this page
             version: 'v2.3' // use graph api version 2.3!!! till July 2017.  then /me/home goes away.
         });
+    })
 
-        // Now that we've initialized the JavaScript SDK, we call
-        // FB.getLoginStatus().  This function gets the state of the
-        // person visiting this page and can return one of three states to
-        // the callback you provide.  They can be:
-        //
-        // 1. Logged into your app ('connected')
-        // 2. Logged into Facebook, but not your app ('not_authorized')
-        // 3. Not logged into Facebook and can't tell if they are logged into
-        //    your app or not.
-        //
-        // These three cases are handled in the callback function.
+    .controller('MainCtrl', function ($scope, ezfb, $window, $location) {
 
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
+        $scope.loginStatus = "??";
 
-    };
+        updateLoginStatus();
 
-    // Load the SDK asynchronously
-    (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-    // Here we run a very simple test of the Graph API after login is
-    // successful.  See statusChangeCallback() for when this call is made.
-    function testAPI() {
-        console.log('Welcome!  Fetching your information.... ');
-        FB.api('/me', function (response) {
-            console.log('Successful login for: ' + response.name);
-            document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
-            document.getElementById('buttonGetFeed1').disabled = false;
-            document.getElementById('buttonGetFeed2').disabled = false;
-
-            var savedStories = getStories();
-            redrawTable(savedStories);
-            var loadResult = 'loaded ' + getKeys(savedStories).length + ' stories from local storage';
-            document.getElementById('loadResults1').innerHTML = loadResult;
-            document.getElementById('loadResults2').innerHTML = loadResult;
-        });
-    }
-
-    function getFeed() {
-
-        var buttonGetFeed1 = document.getElementById('buttonGetFeed1');
-        buttonGetFeed1.disabled = true;
-        var buttonGetFeed2 = document.getElementById('buttonGetFeed2');
-        buttonGetFeed2.disabled = true;
-
-        FB.api(feedUrl,
-            function (response) {
-
-                console.log(response);
-
-                var savedStories = getStories();
-                var savedStoriesCount = getKeys(savedStories).length;
-                var newStories = 0;
-                var dupStories = 0;
-                var loadResult = '';
-
-                for (var i = 0; i < response.data.length; i++) {
-                    var post = response.data[i];
-                    if (!post) continue;
-
-                    var id = post.id;
-                    if (!id) continue;
-
-                    if (savedStories[id]) {
-                        dupStories++;
-                    } else {
-                        newStories++;
-                    }
-                    savedStories[id] = post;   // update it anyway!
+        $scope.login = function () {
+            /**
+             * Calling FB.login with required permissions specified
+             * https://developers.facebook.com/docs/reference/javascript/FB.login/v2.0
+             */
+            ezfb.login(function (res) {
+                /**
+                 * no manual $scope.$apply, I got that handled
+                 */
+                if (res.authResponse) {
+                    updateLoginStatus();
                 }
-                var newSavedStoriesCount = getKeys(savedStories).length;
-                loadResult = 'had ' +
-                    savedStoriesCount +
-                    ' posts, loaded ' +
-                    newStories +
-                    ' new, found ' +
-                    dupStories +
-                    ' dups, now ' +
-                    newSavedStoriesCount +
-                    ' posts.';
-                document.getElementById('loadResults1').innerHTML = loadResult;
-                document.getElementById('loadResults2').innerHTML = loadResult;
+            }, { scope: 'public_profile,email,user_posts,read_stream' });
+        };
 
-                if (response.paging && response.paging.cursors && response.paging.cursors.after) {
-                    feedUrl = baseFeedUrl + "&after=" + response.paging.cursors.after + "&limit=25";
-                    buttonGetFeed1.disabled = false;
-                    buttonGetFeed1.innerHTML = "Get MORE!";
-                    buttonGetFeed2.disabled = false;
-                    buttonGetFeed2.innerHTML = "Get MORE!";
-                } else {
-                    // leave it disabled.
-                }
-
-                // resort saved stories?  prune it?
-
-                saveStories(savedStories);
-                redrawTable(savedStories);
+        $scope.logout = function () {
+            /**
+             * Calling FB.logout
+             * https://developers.facebook.com/docs/reference/javascript/FB.logout
+             */
+            ezfb.logout(function () {
+                updateLoginStatus();
             });
-    }
+        };
 
-    var baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
-    var feedUrl = baseFeedUrl;
-    var table;
-
-    function redrawTable(savedStories) {
-        if (!table) {
-            table = document.createElement('table');
-            var div = document.getElementById('feedResults');
-            div.appendChild(table);
+        /**
+         * Update loginStatus result
+         */
+        function updateLoginStatus() {
+            ezfb.getLoginStatus(function (res) {
+                $scope.loginStatus = res;
+            });
         }
 
-        table.innerHTML = "";
+    });
 
-        var keys = getKeys(savedStories);
-        keys.sort(function (a, b) {
-            return new Date(savedStories[b].created_time) - new Date(savedStories[a].created_time);
-        });
 
-        for (var i = 0; i < keys.length; i++) {
-            var post = savedStories[keys[i]];
 
-            var row = table.insertRow(i);
 
-            var c0 = row.insertCell(0);
-            c0.innerHTML = prettyDate(post.created_time);
-
-            var x = '';
-            if (post.from && post.from.name) {
-                x = post.from.name;
-            }
-            if (post.story) {
-                x = x + ' ' + post.story;
-            }
-            if (post.description) {
-                x = x + ':' + post.description;
-            }
-            var c1 = row.insertCell(1);
-            c1.innerHTML = x;
-
-            var c2 = row.insertCell(2);
-            if (post.picture) {
-                var img = document.createElement("img");
-                img.src = post.picture;
-                c2.appendChild(img);
-            } else {
-                c2.innerHTML = ' ';
-            }
-        }
-    }
-
-    function getStories() {
-        var x = localStorage.savedStories;
-        if (!x) x = "{}";
-        x = JSON.parse(x);
-        if (!x) x = {};
-        return x;
-    }
-
-    function saveStories(savedStories) {
-        localStorage.setItem("savedStories", JSON.stringify(savedStories));
-    }
-
-    function clearFeed() {
-        var savedStories = {};
-        saveStories(savedStories);
-        redrawTable(savedStories);
-        feedUrl = baseFeedUrl;
-    }
-
-    function getKeys(obj, filter) {
-        var name,
-            result = [];
-
-        for (name in obj) {
-            if ((!filter || filter.test(name)) && obj.hasOwnProperty(name)) {
-                result[result.length] = name;
-            }
-        }
-        return result;
-    }
 </script>
+
+
