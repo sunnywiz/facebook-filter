@@ -12,9 +12,17 @@
         <div class="container">
             <h2>angular-easyfb API demo</h2>
             <div>
-                <button class="btn btn-primary" ng-click="login()" ng-disabled="loginStatus == 'connected'">Connect with Facebook</button>
+                <button class="btn btn-primary"
+                        ng-click="login()"
+                        ng-disabled="loginStatus == 'connected'">
+                    Connect with Facebook
+                </button>
                 &nbsp;
-                <button class="btn btn-danger" ng-click="logout()" ng-disabled="!loginStatus || loginStatus != 'connected'">Logout</button>
+                <button class="btn btn-danger"
+                        ng-click="logout()"
+                        ng-disabled="loginStatus != 'connected'">
+                    Logout
+                </button>
                 &nbsp;
             </div>
 
@@ -24,71 +32,90 @@
                     <h4 class="text-info">Login Status: {{loginStatus}}</h4>
                 </div>
             </div>
+
+            <div class="row">
+                <button class="btn btn-primary"
+                        ng-click="getPosts()"
+                        ng-disabled="loginStatus != 'connected'">
+                    Get More Posts!
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
 
 <script>
 
-    var app = angular.module('sunnycatchup', ['ezfb'])
-
-    .config(function (ezfbProvider) {
-        /**
-         * Basic setup
-         *
-         * https://github.com/pc035860/angular-easyfb#configuration
-         */
-        ezfbProvider.setInitParams({
-            appId: '426833590733307',
-            version: 'v2.3' // use graph api version 2.3!!! till July 2017.  then /me/home goes away.
-        });
-    })
-
-    .controller('darth', function ($scope, ezfb, $window, $location) {
-
-        $scope.loginStatus = "vader does not yet know status";
-
-        updateLoginStatus();
-
-        $scope.login = function () {
-            /**
-             * Calling FB.login with required permissions specified
-             * https://developers.facebook.com/docs/reference/javascript/FB.login/v2.0
-             */
-            ezfb.login(function (res) {
-                /**
-                 * no manual $scope.$apply, I got that handled
-                 */
-                if (res.authResponse) {
-                    updateLoginStatus();
-                }
-            }, { scope: 'public_profile,email,user_posts,read_stream' });
-        };
-
-        $scope.logout = function () {
-            /**
-             * Calling FB.logout
-             * https://developers.facebook.com/docs/reference/javascript/FB.logout
-             */
-            ezfb.logout(function () {
-                updateLoginStatus();
-            });
-        };
-
-        /**
-         * Update loginStatus result
-         */
-        function updateLoginStatus() {
-            ezfb.getLoginStatus(function (res) {
-                $scope.loginStatus = res.status;
-            });
-        }
-
+    var app = angular
+.module('sunnycatchup', ['ezfb'])
+.config(function (ezfbProvider) {
+    /**
+     * Basic setup
+     *
+     * https://github.com/pc035860/angular-easyfb#configuration
+     */
+    ezfbProvider.setInitParams({
+        appId: '426833590733307',
+        version: 'v2.3' // use graph api version 2.3!!! till July 2017.  then /me/home goes away.
     });
+})
+.controller('darth', function ($scope, ezfb, $window, $location) {
+
+    $scope.loginStatus = "vader does not yet know status";
+
+    updateLoginStatus();
+
+    $scope.login = function () {
+        /**
+         * Calling FB.login with required permissions specified
+         * https://developers.facebook.com/docs/reference/javascript/FB.login/v2.0
+         */
+        ezfb.login(function (res) {
+            /**
+             * no manual $scope.$apply, I got that handled
+             */
+            if (res.authResponse) {
+                updateLoginStatus();
+            }
+        }, { scope: 'public_profile,email,user_posts,read_stream' });
+    };
+
+    $scope.logout = function () {
+        /**
+         * Calling FB.logout
+         * https://developers.facebook.com/docs/reference/javascript/FB.logout
+         */
+        ezfb.logout(function () {
+            updateLoginStatus();
+        });
+    };
+
+    /**
+     * Update loginStatus result
+     */
+    function updateLoginStatus() {
+        ezfb.getLoginStatus(function (res) {
+            $scope.loginStatus = res.status;
+        });
+    }
+
+    $scope.postsViewModel = [];
+    $scope.allPosts = {};
+    $scope.baseFeedUrl = 'me/home?fields=id,icon,from,story,permalink_url,picture,description';
+    $scope.nextFeedUrl = $scope.baseFeedUrl;
+
+    $scope.getPosts = function () {
+        ezfb.api($scope.nextFeedUrl,
+            function(feedResult) {
+                console.log(feedResult);
+
+            });
+    }
+
+});
 
 
 
 
 </script>
-
-
