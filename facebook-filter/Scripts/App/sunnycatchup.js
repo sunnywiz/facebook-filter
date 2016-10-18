@@ -46,7 +46,7 @@
         });
         for (var i = 0; i < keys.length; i++) {
             var post = allPosts[keys[i]];
-            $scope.postsViewModel.push({
+            var vm = {
                 id: post.id,
                 created_time: post.created_time,
                 caption: post.caption,
@@ -57,7 +57,11 @@
                 link: post.link,
                 description: post.description,
                 picture: post.picture
-            });
+            };
+            if (vm.story && vm.from) {
+                 vm.story = vm.story.replace(vm.from, '');
+            }
+            $scope.postsViewModel.push(vm);
         }
     }
 
@@ -143,5 +147,6 @@
     loadFromLocalStorage();
     rebuildViewModel();
     $scope.nextFeedUrl = baseFeedUrl;
+
 
 });

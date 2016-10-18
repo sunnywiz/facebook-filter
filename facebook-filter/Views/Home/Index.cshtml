@@ -45,25 +45,23 @@
                     ({{lastLoadTime}} ms)
                 </div>
                 <div class="row">
-                    <table class="table table-condensed table-striped">
-                        <tr ng-repeat="post in postsViewModel">
-                            <td title="{{post.created_time}}">{{post.prettyCreated}}</td>
-                            <td title="{{post.id}}">
-                                <div>
-                                    <b>{{post.from}}</b>
-                                    <i>{{post.story}}</i>
-                                    {{post.message}}
-                                </div>
-                            <td>
-                                {{post.description}}
+                    <div class="col-sm-3" style="padding:0px" ng-repeat="post in postsViewModel">
+                        <div style="padding: 1px; margin: 1px; background: lightgray">
+                            <img style="float: right" class="image" ng-show="post.picture" src="{{post.picture}}" />
+                            <div>
+                                <b>{{post.from}}</b>
+                                <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
+                                <i style="font-size: 0.7em">{{post.story}}</i>
+                                {{post.message}}
+                            </div>
+                            <div style="color: gray">
+                                <span>{{post.description}}</span>
                                 <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
                                 <span ng-show="post.caption">[{{post.caption}}]</span>
-                            </td>
-                            <td>
-                                <img class="image" ng-show="post.picture" src="{{post.picture}}"/>                                
-                            </td>
-                        </tr>
-                    </table>
+                            </div>
+                            <div class="clearfix"/>
+                        </div>
+                    </div>
                 </div>
                 <div class="row well-sm">
                     <button class="btn btn-primary"
