@@ -13,23 +13,28 @@
     <div ng-controller="darth">
         <div class="container">
             <div class="row well-sm">
-                <button class="btn btn-primary"
-                        ng-click="login()"
-                        ng-disabled="loginStatus == 'connected'">
-                    Connect with Facebook
-                </button>
-                &nbsp;
-                <button class="btn btn-danger"
-                        ng-click="logout()"
-                        ng-disabled="loginStatus != 'connected'">
-                    Logout
-                </button>
-                &nbsp;
-                Login Status: {{loginStatus}}
-                <button class="btn btn-warning"
-                        ng-click="clearLocalStorage()">
-                    Clear Local Storage
-                </button>
+                <div class="col-md-6">
+                    <button class="btn btn-primary"
+                            ng-click="login()"
+                            ng-disabled="loginStatus == 'connected'">
+                        Connect with Facebook
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-danger"
+                            ng-click="logout()"
+                            ng-disabled="loginStatus != 'connected'">
+                        Logout
+                    </button>
+                    &nbsp;
+                    Login Status: {{loginStatus}}
+                </div>
+                <div class="col-md-6">
+                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()"/>
+                    <button class="btn btn-warning"
+                            ng-click="clearLocalStorage()">
+                        Clear Local Storage
+                    </button>
+                </div>
             </div>
 
             <div class="well-sm">
@@ -59,21 +64,21 @@
                                 <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
                                 <span ng-show="post.caption">[{{post.caption}}]</span>
                             </div>
-                            <div class="clearfix"/>
+                            <div class="clearfix" />
                         </div>
                     </div>
                 </div>
-                <div class="row well-sm">
-                    <button class="btn btn-primary"
-                            ng-click="getPosts()"
-                            ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
-                        Get More Posts!
-                    </button>
-                    Loaded: {{numPosts()}}
-                    New: {{newStories}}
-                    Dup: {{dupStories}}
-                    ({{lastLoadTime}} ms)
-                </div>
+            </div>
+            <div class="row well-sm">
+                <button class="btn btn-primary"
+                        ng-click="getPosts()"
+                        ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
+                    Get More Posts!
+                </button>
+                Loaded: {{numPosts()}}
+                New: {{newStories}}
+                Dup: {{dupStories}}
+                ({{lastLoadTime}} ms)
             </div>
         </div>
     </div>

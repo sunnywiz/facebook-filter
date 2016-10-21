@@ -18,10 +18,11 @@
     var baseFeedUrl = 'me/home?fields=id,icon,from,story,caption,link,message,picture,full_picture,description';
     var allPosts = {};
 
-    // scope stuff
+    // non-bound-stuff local stuff
 
     function storeToLocalStorage() {
         localStorage.setItem("allPosts", JSON.stringify(allPosts));
+        localStorage.setItem("localStorageLimit", $scope.localStorageLimit);
     }
 
     function loadFromLocalStorage() {
@@ -30,6 +31,11 @@
         x = JSON.parse(x);
         if (!x) x = {};
         allPosts = x;
+
+        $scope.localStorageLimit = parseInt(localStorage.localStorageLimit);
+        if (!$scope.localStorageLimit) {
+            $scope.localStorageLimit = 1000;
+        }
     }
 
     function updateLoginStatus() {
@@ -59,11 +65,13 @@
                 picture: post.picture
             };
             if (vm.story && vm.from) {
-                 vm.story = vm.story.replace(vm.from, '');
+                vm.story = vm.story.replace(vm.from, '');
             }
             $scope.postsViewModel.push(vm);
         }
     }
+
+    // scope stuff
 
     $scope.loginStatus = "vader does not yet know status";
 
@@ -140,6 +148,10 @@
         allPosts = {};
         storeToLocalStorage();
         rebuildViewModel();
+    };
+
+    $scope.changedLocalStorageLimit = function () {
+        storeToLocalStorage(); 
     };
 
     // INITIALIZE!
