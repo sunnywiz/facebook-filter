@@ -57,6 +57,8 @@
                     Loaded: {{numPosts()}}
                     New: {{newStories}}
                     Dup: {{dupStories}}
+                    Hidden: {{numHidden()}}
+                    <a href="#" ng-click="unhideAll()">unhide</a>
                     ({{lastLoadTime}} ms)
                 </div>
             </div>
@@ -64,23 +66,25 @@
         </div>
 
         <div class="darth-group">
-            <div class="darth-item" ng-repeat="post in postsViewModel">
-                <div ng-show="post.visible" style="padding: 1px; margin: 1px; background: lightgray">
+            <div class="darth-item" ng-repeat="p in postsViewModel">
+                <div ng-show="p.post.visible" style="padding: 1px; margin: 1px; background: #eeeeee">
                     <div>
-                        <b>{{post.from}}</b>
-                        <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
-                        <i style="font-size: 0.7em">{{post.story}}</i>
+                        <b>{{p.post.from.name}}</b>
+                        <span style="font-size: 0.7em">{{p.prettyCreated}}</span>
+                        <i style="font-size: 0.7em">{{p.story}}</i>
                     </div>
-                    <img style="float: right;" ng-show="post.picture" src="{{post.picture}}" />
+                    <img style="float: right;" ng-show="p.post.picture" src="{{p.post.picture}}" />
                     <div>
-                        {{post.message}}
+                        {{p.post.message}}
                     </div>
                     <div style="color: gray">
-                        <span>{{post.description}}</span>
-                        <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
-                        <span ng-show="post.caption">[{{post.caption}}]</span>
+                        <span>{{p.post.description}}</span>
+                        <span ng-show="p.post.link"><a href="{{p.post.link}}" target="_">link</a></span>
+                        <span ng-show="p.post.caption">{{p.post.caption}}</span>
                     </div>
-                    <button ng-click="clicky(post)">hide</button>
+                    <div style="display: block; float: right; padding: 3px; background:white">
+                        <a href="#" ng-click="hidePost(p)">✓</a>
+                    </div>
                     <div style="clear: both; height:0px">&nbsp;</div>
                 </div>
             </div>
@@ -104,6 +108,8 @@
                     Loaded: {{numPosts()}}
                     New: {{newStories}}
                     Dup: {{dupStories}}
+                    Hidden: {{numHidden()}}
+                    <a href="#" ng-click="unhideAll()">unhide</a>
                     ({{lastLoadTime}} ms)
                 </div>
             </div>

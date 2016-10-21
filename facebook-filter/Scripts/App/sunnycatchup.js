@@ -66,17 +66,9 @@
         for (var i = 0; i < keys.length; i++) {
             var post = allPosts[keys[i]];
             var vm = {
-                id: post.id,
-                created_time: post.created_time,
-                caption: post.caption,
-                message: post.message,
+                post: post,
                 prettyCreated: prettyDate(post.created_time),
-                from: post.from.name,
-                story: post.story,
-                link: post.link,
-                description: post.description,
-                picture: post.picture,
-                visible: true
+                story: post.story
             };
             if (vm.story && vm.from) {
                 vm.story = vm.story.replace(vm.from, '');
@@ -137,8 +129,11 @@
                         $scope.dupStories++;
                     } else {
                         $scope.newStories++;
+                        // have not seen this post before.. 
+                        // initialize some stuff. 
+                        post.visible = true;
+                        allPosts[id] = post;
                     }
-                    allPosts[id] = post; // update it anyway!
                 }
 
                 if (feedResult.paging && feedResult.paging.cursors && feedResult.paging.cursors.after) {
@@ -169,8 +164,27 @@
         storeToLocalStorage();
     };
 
-    $scope.clicky = function (post) {
-        post.visible = false;
+    $scope.hidePost = function (post) {
+        post.post.visible = false;
+        storeToLocalStorage();
+    }
+
+    $scope.numHidden = function () {
+        var count = 0;
+        var keys = Object.keys(allPosts);
+        for (var i = 0; i < keys.length; i++) {
+            if (!allPosts[keys[i]].visible) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    $scope.unhideAll = function() {
+        var keys = Object.keys(allPosts);
+        for (var i = 0; i < keys.length; i++) {
+            allPosts[keys[i]].visible = true;
+        }
     }
 
     // INITIALIZE!
