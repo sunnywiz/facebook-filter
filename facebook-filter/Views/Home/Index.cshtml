@@ -7,17 +7,19 @@
 
 <div ng-app="sunnycatchup">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+    @*<script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>*@
+    <script src="~/Scripts/angular-ezfb-1.5.1.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4.1/dist/masonry.pkgd.min.js"></script>
     <script src="~/Scripts/App/sunnycatchup.js"></script>
 
     <div ng-controller="darth">
         <div class="container">
-            <div class="row well-sm">
-                <div class="col-md-6">
+            <div class="row well">
+                <div class="col-md-3">
                     <button class="btn btn-primary"
                             ng-click="login()"
                             ng-disabled="loginStatus == 'connected'">
-                        Connect with Facebook
+                        FB Login
                     </button>
                     &nbsp;
                     <button class="btn btn-danger"
@@ -25,33 +27,44 @@
                             ng-disabled="loginStatus != 'connected'">
                         Logout
                     </button>
-                    &nbsp;
+                </div>
+                <div class="col-md-3">
                     Login Status: {{loginStatus}}
                 </div>
-                <div class="col-md-6">
-                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()" />
+                <div class="col-md-3">
+                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()"/>
+                </div>
+                <div class="col-md-3">
                     <button class="btn btn-warning"
                             ng-click="clearLocalStorage()">
                         Clear Local Storage
                     </button>
                 </div>
             </div>
-            <div class="row well-sm">
-                <button class="btn btn-primary"
-                        ng-click="getPosts()"
-                        ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
-                    Get More Posts!
-                </button>
-                Loaded: {{numPosts()}}
-                New: {{newStories}}
-                Dup: {{dupStories}}
-                ({{lastLoadTime}} ms)
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary"
+                            ng-click="getPosts()"
+                            ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
+                        Get More Posts!
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-info" onclick="applyMasonry()">
+                        Rearrange
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    Loaded: {{numPosts()}}
+                    New: {{newStories}}
+                    Dup: {{dupStories}}
+                    ({{lastLoadTime}} ms)
+                </div>
             </div>
 
         </div>
 
         <div class="darth-group">
-            <div class="darth-item" style="padding: 0px" ng-repeat="post in postsViewModel">
+            <div class="darth-item" ng-repeat="post in postsViewModel">
                 <div style="padding: 1px; margin: 1px; background: lightgray">
                     <div>
                         <b>{{post.from}}</b>
@@ -59,7 +72,7 @@
                         <i style="font-size: 0.7em">{{post.story}}</i>
                         {{post.message}}
                     </div>
-                    <img style="display: block; margin-left: auto; margin-right: auto;" ng-show="post.picture" src="{{post.picture}}" />
+                    <img style="display: block; margin-left: auto; margin-right: auto;" ng-show="post.picture" src="{{post.picture}}"/>
                     <div style="color: gray">
                         <span>{{post.description}}</span>
                         <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
@@ -71,17 +84,33 @@
         <div class="clearfix"></div>
 
         <div class="container">
-            <div class="row well-sm">
-                <button class="btn btn-primary"
-                        ng-click="getPosts()"
-                        ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
-                    Get More Posts!
-                </button>
-                Loaded: {{numPosts()}}
-                New: {{newStories}}
-                Dup: {{dupStories}}
-                ({{lastLoadTime}} ms)
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary"
+                            ng-click="getPosts()"
+                            ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
+                        Get More Posts!
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    Loaded: {{numPosts()}}
+                    New: {{newStories}}
+                    Dup: {{dupStories}}
+                    ({{lastLoadTime}} ms)
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    
+    function applyMasonry() {
+        var elem = document.querySelector('.darth-group');
+        var msnry = new Masonry(elem, {
+            // options
+            itemSelector: '.darth-item',
+            columnWidth: 200
+        });
+    }
+</script>

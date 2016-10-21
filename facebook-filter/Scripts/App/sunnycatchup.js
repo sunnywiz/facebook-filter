@@ -54,11 +54,11 @@
             var db = new Date(allPosts[b].created_time);
             if (db > da) return 1;
             if (da > db) return -1;
-            return 0; 
+            return 0;
         });
 
         // this part enforces the limit
-        while (keys.length > $scope.localStorageLimit && keys.length>25) {
+        while (keys.length > $scope.localStorageLimit && keys.length > 25) {
             delete allPosts[keys[keys.length - 1]];
             keys.splice(-1, 1);
         }
@@ -82,6 +82,7 @@
             }
             $scope.postsViewModel.push(vm);
         }
+
     }
 
     // scope stuff
@@ -164,7 +165,7 @@
     };
 
     $scope.changedLocalStorageLimit = function () {
-        storeToLocalStorage(); 
+        storeToLocalStorage();
     };
 
     // INITIALIZE!
