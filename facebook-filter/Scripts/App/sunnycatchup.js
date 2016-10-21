@@ -47,9 +47,18 @@
     function rebuildViewModel() {
         $scope.postsViewModel = [];
         var keys = Object.keys(allPosts);
+
+        // this part gives ascending sort order
         keys.sort(function (a, b) {
             return new Date(allPosts[b].created_time) - new Date(allPosts[a].created_time);
         });
+
+        // this part enforces the limit
+        while (keys.length > $scope.localStorageLimit && keys.length>25) {
+            delete allPosts[keys[keys.length - 1]];
+            keys.splice(-1, 1);
+        }
+
         for (var i = 0; i < keys.length; i++) {
             var post = allPosts[keys[i]];
             var vm = {
