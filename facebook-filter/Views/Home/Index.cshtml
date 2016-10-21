@@ -7,7 +7,7 @@
 
 <div ng-app="sunnycatchup">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    @*<script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>*@
+    @* there was a DDOS, so i downloaded a cached version instead.. <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>*@
     <script src="~/Scripts/angular-ezfb-1.5.1.js"></script>
     <script src="https://unpkg.com/masonry-layout@4.1/dist/masonry.pkgd.min.js"></script>
     <script src="~/Scripts/App/sunnycatchup.js"></script>
@@ -65,7 +65,7 @@
 
         <div class="darth-group">
             <div class="darth-item" ng-repeat="post in postsViewModel">
-                <div style="padding: 1px; margin: 1px; background: lightgray">
+                <div ng-show="post.visible" style="padding: 1px; margin: 1px; background: lightgray">
                     <div>
                         <b>{{post.from}}</b>
                         <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
@@ -80,6 +80,7 @@
                         <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
                         <span ng-show="post.caption">[{{post.caption}}]</span>
                     </div>
+                    <button ng-click="clicky(post)">hide</button>
                     <div style="clear: both; height:0px">&nbsp;</div>
                 </div>
             </div>
@@ -124,7 +125,7 @@
                 item.style.width = x + "px";
                 var height = item.offsetHeight;
                 var ratio = height / x;
-                if (ratio < 2) {
+                if (ratio < 1.5) {
                     break;
                 } 
             }

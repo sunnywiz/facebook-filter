@@ -75,7 +75,8 @@
                 story: post.story,
                 link: post.link,
                 description: post.description,
-                picture: post.picture
+                picture: post.picture,
+                visible: true
             };
             if (vm.story && vm.from) {
                 vm.story = vm.story.replace(vm.from, '');
@@ -167,6 +168,10 @@
     $scope.changedLocalStorageLimit = function () {
         storeToLocalStorage();
     };
+
+    $scope.clicky = function (post) {
+        post.visible = false;
+    }
 
     // INITIALIZE!
     updateLoginStatus();
