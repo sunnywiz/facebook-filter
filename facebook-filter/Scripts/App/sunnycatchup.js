@@ -50,7 +50,11 @@
 
         // this part gives ascending sort order
         keys.sort(function (a, b) {
-            return new Date(allPosts[b].created_time) - new Date(allPosts[a].created_time);
+            var da = new Date(allPosts[a].created_time);
+            var db = new Date(allPosts[b].created_time);
+            if (db > da) return 1;
+            if (da > db) return -1;
+            return 0; 
         });
 
         // this part enforces the limit
