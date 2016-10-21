@@ -1,5 +1,5 @@
 ﻿var app = angular
-.module('sunnycatchup', ['ezfb'])
+.module('sunnycatchup', ['ezfb', 'wu.masonry'])
 .config(function (ezfbProvider) {
     /**
      * Basic setup

@@ -8,6 +8,7 @@
 <div ng-app="sunnycatchup">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+    <script src="~/Scripts/angular-masonry.min.js"></script>
     <script src="~/Scripts/App/sunnycatchup.js"></script>
 
     <div ng-controller="darth">
@@ -29,7 +30,7 @@
                     Login Status: {{loginStatus}}
                 </div>
                 <div class="col-md-6">
-                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()"/>
+                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()" />
                     <button class="btn btn-warning"
                             ng-click="clearLocalStorage()">
                         Clear Local Storage
@@ -49,24 +50,27 @@
                     Dup: {{dupStories}}
                     ({{lastLoadTime}} ms)
                 </div>
+
                 <div class="row">
-                    <div class="col-sm-3" style="padding:0px" ng-repeat="post in postsViewModel">
-                        <div style="padding: 1px; margin: 1px; background: lightgray">
-                            <img style="float: right" class="image" ng-show="post.picture" src="{{post.picture}}" />
-                            <div>
-                                <b>{{post.from}}</b>
-                                <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
-                                <i style="font-size: 0.7em">{{post.story}}</i>
-                                {{post.message}}
+                    <masonry column-width="200">
+                        <div class="masonry-brick" style="width: 200px" ng-repeat="post in postsViewModel">
+                            <div style="padding: 1px; margin: 1px; background: lightgray">
+                                <img style="float: right" class="image" ng-show="post.picture" src="{{post.picture}}" />
+                                <div>
+                                    <b>{{post.from}}</b>
+                                    <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
+                                    <i style="font-size: 0.7em">{{post.story}}</i>
+                                    {{post.message}}
+                                </div>
+                                <div style="color: gray">
+                                    <span>{{post.description}}</span>
+                                    <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
+                                    <span ng-show="post.caption">[{{post.caption}}]</span>
+                                </div>
+                                <div class="clearfix" />
                             </div>
-                            <div style="color: gray">
-                                <span>{{post.description}}</span>
-                                <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
-                                <span ng-show="post.caption">[{{post.caption}}]</span>
-                            </div>
-                            <div class="clearfix" />
                         </div>
-                    </div>
+                    </masonry>
                 </div>
             </div>
             <div class="row well-sm">
