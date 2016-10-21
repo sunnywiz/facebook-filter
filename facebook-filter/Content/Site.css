@@ -16,3 +16,8 @@ textarea {
     max-width: 280px;
 }
 
+.darth-item {
+    display: block;
+    float: left;
+    width:200px
+}

@@ -29,46 +29,49 @@
                     Login Status: {{loginStatus}}
                 </div>
                 <div class="col-md-6">
-                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()"/>
+                    Limit: <input type="number" ng-model="localStorageLimit" ng-change="changedLocalStorageLimit()" />
                     <button class="btn btn-warning"
                             ng-click="clearLocalStorage()">
                         Clear Local Storage
                     </button>
                 </div>
             </div>
+            <div class="row well-sm">
+                <button class="btn btn-primary"
+                        ng-click="getPosts()"
+                        ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
+                    Get More Posts!
+                </button>
+                Loaded: {{numPosts()}}
+                New: {{newStories}}
+                Dup: {{dupStories}}
+                ({{lastLoadTime}} ms)
+            </div>
 
-            <div class="well-sm">
-                <div class="row well-sm">
-                    <button class="btn btn-primary"
-                            ng-click="getPosts()"
-                            ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
-                        Get More Posts!
-                    </button>
-                    Loaded: {{numPosts()}}
-                    New: {{newStories}}
-                    Dup: {{dupStories}}
-                    ({{lastLoadTime}} ms)
-                </div>
-                <div class="row">
-                    <div class="col-sm-3" style="padding:0px" ng-repeat="post in postsViewModel">
-                        <div style="padding: 1px; margin: 1px; background: lightgray">
-                            <img style="float: right" class="image" ng-show="post.picture" src="{{post.picture}}" />
-                            <div>
-                                <b>{{post.from}}</b>
-                                <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
-                                <i style="font-size: 0.7em">{{post.story}}</i>
-                                {{post.message}}
-                            </div>
-                            <div style="color: gray">
-                                <span>{{post.description}}</span>
-                                <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
-                                <span ng-show="post.caption">[{{post.caption}}]</span>
-                            </div>
-                            <div class="clearfix" />
-                        </div>
+        </div>
+
+        <div class="darth-group">
+            <div class="darth-item" style="padding: 0px" ng-repeat="post in postsViewModel">
+                <div style="padding: 1px; margin: 1px; background: lightgray">
+                    <div>
+                        <b>{{post.from}}</b>
+                        <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
+                        <i style="font-size: 0.7em">{{post.story}}</i>
+                        {{post.message}}
                     </div>
+                    <img ng-show="post.picture" src="{{post.picture}}" />
+                    <div style="color: gray">
+                        <span>{{post.description}}</span>
+                        <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
+                        <span ng-show="post.caption">[{{post.caption}}]</span>
+                    </div>
+                    <div class="clearfix"/>
                 </div>
             </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="container">
             <div class="row well-sm">
                 <button class="btn btn-primary"
                         ng-click="getPosts()"
