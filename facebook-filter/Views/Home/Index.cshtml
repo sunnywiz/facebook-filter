@@ -70,14 +70,17 @@
                         <b>{{post.from}}</b>
                         <span style="font-size: 0.7em">{{post.prettyCreated}}</span>
                         <i style="font-size: 0.7em">{{post.story}}</i>
+                    </div>
+                    <img style="float: right;" ng-show="post.picture" src="{{post.picture}}" />
+                    <div>
                         {{post.message}}
                     </div>
-                    <img style="display: block; margin-left: auto; margin-right: auto;" ng-show="post.picture" src="{{post.picture}}"/>
                     <div style="color: gray">
                         <span>{{post.description}}</span>
                         <span ng-show="post.link"><a href="{{post.link}}" target="_">link</a></span>
                         <span ng-show="post.caption">[{{post.caption}}]</span>
                     </div>
+                    <div style="clear: both; height:0px">&nbsp;</div>
                 </div>
             </div>
         </div>
