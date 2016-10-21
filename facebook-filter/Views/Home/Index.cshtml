@@ -91,6 +91,10 @@
                             ng-disabled="(loginStatus != 'connected') || !nextFeedUrl">
                         Get More Posts!
                     </button>
+                    &nbsp;
+                    <button class="btn btn-info" onclick="applyMasonry()">
+                        Rearrange
+                    </button>
                 </div>
                 <div class="col-md-6">
                     Loaded: {{numPosts()}}
@@ -107,6 +111,22 @@
     
     function applyMasonry() {
         var elem = document.querySelector('.darth-group');
+
+        var items = document.getElementsByClassName("darth-item");
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i]; 
+            var x; 
+            item.style.width = "200px";
+            for (x = 200; x < 800; x += 200) {
+                item.style.width = x + "px";
+                var height = item.offsetHeight;
+                var ratio = height / x;
+                if (ratio < 2) {
+                    break;
+                } 
+            }
+        }
+
         var msnry = new Masonry(elem, {
             // options
             itemSelector: '.darth-item',
